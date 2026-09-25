@@ -1,67 +1,48 @@
 import React, { useState } from 'react';
 import { 
-  Truck, Shield, Award, ArrowRight, Calendar, DollarSign, Lock, 
+  Truck, Shield, Award, ArrowRight, ArrowLeft, Calendar, DollarSign, Lock, 
   ChevronRight, CheckCircle2, Sparkles, Layers, Terminal, Server,
-  AlertCircle, Check, Phone, Plane, Thermometer, Compass, Fuel, Gauge
+  AlertCircle, Check, Phone, Plane, Thermometer, Compass, Fuel, Gauge,
+  MapPin, Clock, FileText, CheckSquare, RefreshCw
 } from 'lucide-react';
 import { AdminPortalModal } from './AdminPortalModal.tsx';
 
-interface ShowcaseItem {
-  id: string;
-  title: string;
-  subtitle: string;
-  rate: string;
-  status: string;
-  features: string[];
-  img: string;
+interface Stop {
+  city: string;
+  state: string;
+  facility: string;
+  time: string;
 }
 
-const ITEMS: ShowcaseItem[] = [
-  {
-    "id": "LANE-7801",
-    "title": "Chicago, IL → Dallas, TX (Intermodal Corridor)",
-    "subtitle": "53ft Dry Van // 42,000 lbs Automotive Components // 924 Miles",
-    "rate": "$3,450 Flat Rate ($3.73/mi)",
-    "status": "CARRIER MATCHED // EN ROUTE",
-    "features": [
-      "Real-time ELD MacroPoint Tracking",
-      "Drop & Hook Scheduled at Receiver",
-      "Pre-Pass Scale Clearance Active",
-      "Detention Rate: $85/hr after 2 hrs"
-    ],
-    "img": "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7"
-  },
-  {
-    "id": "LANE-9044",
-    "title": "Los Angeles, CA → Phoenix, AZ (Priority Reefers)",
-    "subtitle": "53ft Multi-Temp Reefer // 34°F Setpoint // Fresh Produce",
-    "rate": "$1,980 Flat Rate ($5.28/mi)",
-    "status": "DISPATCHING NOW // BAY 12",
-    "features": [
-      "Continuous Temperature Telemetry",
-      "QuickPay 24hr Remittance Available",
-      "Clean Bill of Lading Auto-Gate",
-      "24/7 Live Broker Dispatch Cell"
-    ],
-    "img": "https://images.unsplash.com/photo-1519003722824-194d4455a60c"
-  },
-  {
-    "id": "LANE-4412",
-    "title": "Atlanta, GA → Philadelphia, PA (Heavy Flatbed)",
-    "subtitle": "48ft Spread Axle Flatbed // Structural Steel Beams // 46,500 lbs",
-    "rate": "$3,120 Flat Rate ($4.05/mi)",
-    "status": "OPEN LOAD // BID ACCEPTED",
-    "features": [
-      "Full 8ft Tarping Required & Vetted",
-      "Over-Weight Permit Verified",
-      "Direct Mill Gate Delivery Pass",
-      "Electronic Proof-of-Delivery Auto-Archive"
-    ],
-    "img": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d"
-  }
-];
-
 export default function App() {
+  const [step, setStep] = useState<number>(1);
+  
+  // Step 1: Lane Configuration
+  const [origin, setOrigin] = useState('Chicago, IL');
+  const [destination, setDestination] = useState('Dallas, TX');
+  const [equipmentType, setEquipmentType] = useState('53ft Dry Van');
+  const [miles, setMiles] = useState(924);
+
+  // Step 2: Weight & Accessorials
+  const [weight, setWeight] = useState(42000);
+  const [cargoType, setCargoType] = useState('Automotive Components');
+  const [hasTarp, setHasTarp] = useState(false);
+  const [hasLiftgate, setHasLiftgate] = useState(false);
+  const [isHazmat, setIsHazmat] = useState(false);
+  const [tempRequired, setTempRequired] = useState(false);
+
+  // Step 3: Margin & Financials
+  const [shipperRate, setShipperRate] = useState(3850);
+  const [carrierPay, setCarrierPay] = useState(3150);
+
+  // Step 4: Carrier Compliance Checklist
+  const [compliance, setCompliance] = useState({
+    activeInsurance: true,
+    safetyRatingSatisfactory: true,
+    eldTrackingEnabled: true,
+    w9OnDeck: true
+  });
+
   const [isAdminOpen, setIsAdminOpen] = useState(
     typeof window !== 'undefined' && (
       window.location.search.includes('admin') || 
@@ -69,257 +50,344 @@ export default function App() {
       window.location.hash === '#admin'
     )
   );
-  const [selectedItem, setSelectedItem] = useState(ITEMS[0].id);
-  const [inquiryName, setInquiryName] = useState('');
-  const [inquiryPhone, setInquiryPhone] = useState('');
-  const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inquiryName || !inquiryPhone) return;
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setInquiryName('');
-      setInquiryPhone('');
-    }, 4000);
-  };
+  const grossMargin = shipperRate - carrierPay;
+  const marginPercent = ((grossMargin / shipperRate) * 100).toFixed(1);
+  const rpmShipper = (shipperRate / miles).toFixed(2);
+  const rpmCarrier = (carrierPay / miles).toFixed(2);
 
   return (
-    <div className="min-h-screen bg-[#0A0A0B] text-zinc-100 font-sans selection:bg-amber-500/20 selection:text-amber-400">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#0A0A0B]/90 backdrop-blur-md border-b border-zinc-800/80 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-zinc-950 font-extrabold shadow-lg shadow-amber-600/20">
-              <Truck className="w-5 h-5 text-zinc-950" />
-            </div>
-            <div>
-              <span className="text-xs font-mono uppercase tracking-widest text-amber-500 font-semibold">Intermodal Freight Brokerage & Carrier Lane OS</span>
-              <h1 className="text-lg font-bold tracking-tight text-white leading-none">FREIGHT BROKER DISPATCH OS</h1>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#0A0A0B] text-zinc-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-black">
+      {/* Top Telemetry Header */}
+      <header className="border-b border-zinc-800 bg-[#0D0E12] px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-30 font-mono text-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-3 h-3 rounded-full bg-cyan-400 animate-pulse" />
+          <span className="font-black tracking-widest text-cyan-400 flex items-center gap-2 text-base">
+            <Truck size={18} /> APEX INTERMODAL // MULTI-STOP LANE STEPPER & RATE WIZARD
+          </span>
+          <span className="text-zinc-600">|</span>
+          <span className="text-zinc-400 font-semibold uppercase text-xs">ARCHETYPE C: STEPPER WIZARD</span>
+        </div>
 
-          <div className="hidden md:flex items-center gap-8 text-xs font-medium uppercase tracking-wider text-zinc-400">
-            <a href="#inventory" className="hover:text-amber-400 transition">Fleet Roster</a>
-            <a href="#telemetry" className="hover:text-amber-400 transition">Telematics</a>
-            <a href="#specs" className="hover:text-amber-400 transition">Compliance</a>
-            <a href="#dispatch" className="hover:text-amber-400 transition">Book Dispatch</a>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsAdminOpen(true)}
-              className="px-4 py-2 rounded-lg bg-zinc-900 border border-amber-500/40 text-amber-400 hover:bg-amber-500/10 text-xs font-mono uppercase tracking-wider transition flex items-center gap-2"
-            >
-              <Lock className="w-3.5 h-3.5" />
-              <span>[ DISPATCH PASS ]</span>
-            </button>
-          </div>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => setIsAdminOpen(true)}
+            className="px-3.5 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 rounded-lg text-xs font-mono font-bold transition-all"
+          >
+            [ BROKER DESK PASS ]
+          </button>
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="relative pt-20 pb-24 px-6 overflow-hidden border-b border-zinc-800">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(245,158,11,0.15),rgba(255,255,255,0))]"></div>
-        <div className="max-w-5xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono mb-6">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>COMMERCIAL FLEET ENGINE • 9.8 VERIFIED PRODUCTION GRADE</span>
+      {/* Main Container */}
+      <main className="flex-1 max-w-4xl mx-auto w-full p-6 sm:p-8 space-y-8">
+        {/* Stepper Progress Bar */}
+        <div className="bg-[#12141C] border border-zinc-800 p-4 sm:p-6 rounded-2xl shadow-xl font-mono">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xs uppercase tracking-widest text-cyan-400 font-bold">
+                STAGE {step} OF 4
+              </span>
+              <span className="text-zinc-600">/</span>
+              <span className="text-xs text-zinc-300">
+                {step === 1 && "LANE & ROUTE ARCHITECTURE"}
+                {step === 2 && "CARGO & ACCESSORIAL PROFILING"}
+                {step === 3 && "RATE SPREAD & MARGIN SIMULATOR"}
+                {step === 4 && "CARRIER COMPLIANCE & RATE CONFIRMATION"}
+              </span>
+            </div>
+            <span className="text-xs font-bold text-cyan-400">{step * 25}% COMPLETE</span>
           </div>
 
-          <h2 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight">
-            FREIGHT <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-500">BROKER DISPATCH OS</span>
-          </h2>
-
-          <p className="mt-6 text-lg sm:text-xl text-zinc-400 max-w-3xl mx-auto leading-relaxed">
-            Carrier Lane Matching, Spot Rates & Digital BOL Vault. High-utilization asset dispatch, real-time telemetry, and turnkey Supabase PostgreSQL database schemas.
-          </p>
-
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <a
-              href="#dispatch"
-              className="px-8 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-sm tracking-wide transition shadow-lg shadow-amber-500/25 flex items-center gap-2"
-            >
-              <span>Instant Fleet Dispatch</span>
-              <ArrowRight className="w-4 h-4" />
-            </a>
-            <button
-              onClick={() => setIsAdminOpen(true)}
-              className="px-8 py-3.5 rounded-xl bg-zinc-900 border border-zinc-700 hover:border-amber-500/40 text-zinc-200 text-sm font-semibold transition flex items-center gap-2"
-            >
-              <span>Launch Supervisor OS</span>
-              <span className="text-amber-400 font-mono text-xs font-bold">[freight2026]</span>
-            </button>
-          </div>
-
-          {/* Metrics Ticker */}
-          <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
-            
-              <div key="ACTIVE FREIGHT LANES" className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-sm">
-                <span className="text-xs font-semibold tracking-wider font-mono text-zinc-400 uppercase tracking-wider block">ACTIVE FREIGHT LANES</span>
-                <p className="text-lg sm:text-xl font-bold font-mono text-amber-400 mt-1">{"864 LANES"}</p>
-              </div>
-            
-              <div key="AVERAGE RATE / MILE" className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-sm">
-                <span className="text-xs font-semibold tracking-wider font-mono text-zinc-400 uppercase tracking-wider block">AVERAGE RATE / MILE</span>
-                <p className="text-lg sm:text-xl font-bold font-mono text-amber-400 mt-1">{"$3.42 / MI"}</p>
-              </div>
-            
-              <div key="ON-TIME DISPATCH RATE" className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-sm">
-                <span className="text-xs font-semibold tracking-wider font-mono text-zinc-400 uppercase tracking-wider block">ON-TIME DISPATCH RATE</span>
-                <p className="text-lg sm:text-xl font-bold font-mono text-amber-400 mt-1">{"99.1%"}</p>
-              </div>
-            
-              <div key="DIGITAL BOL ARCHIVES" className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-sm">
-                <span className="text-xs font-semibold tracking-wider font-mono text-zinc-400 uppercase tracking-wider block">DIGITAL BOL ARCHIVES</span>
-                <p className="text-lg sm:text-xl font-bold font-mono text-amber-400 mt-1">{"14,290 DOCS"}</p>
-              </div>
-            
-          </div>
-        </div>
-      </section>
-
-      {/* Showcase Grid */}
-      <section id="inventory" className="py-20 px-6 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
-          <div>
-            <span className="text-xs font-mono text-amber-500 uppercase tracking-widest block mb-2">OPERATIONAL LINEUP</span>
-            <h3 className="text-3xl font-extrabold text-white">Featured Fleet & Priority Units</h3>
-          </div>
-          <span className="text-sm text-zinc-400 mt-2 md:mt-0 font-mono">100% Inspected & Live Telematics Connected</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {ITEMS.map((item) => (
+          <div className="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
             <div 
-              key={item.id}
-              className="group rounded-2xl bg-[#121214] border border-zinc-800 hover:border-amber-500/40 transition-all overflow-hidden flex flex-col shadow-xl"
-            >
-              <div className="relative h-56 overflow-hidden bg-zinc-900">
-                <img 
-                  src={item.img} 
-                  alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#121214] via-transparent to-transparent"></div>
-                <div className="absolute top-4 right-4 px-2.5 py-1 rounded bg-black/70 backdrop-blur-md border border-zinc-700 text-xs font-semibold font-mono font-bold text-amber-400">
-                  {item.status}
+              className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full transition-all duration-300"
+              style={{ width: `${step * 25}%` }}
+            />
+          </div>
+
+          {/* Stepper Tabs */}
+          <div className="grid grid-cols-4 gap-2 mt-4 text-xs font-bold text-center">
+            {['1. Lane Route', '2. Cargo Specs', '3. Margin Calc', '4. Rate Con'].map((label, i) => (
+              <button
+                key={label}
+                onClick={() => setStep(i + 1)}
+                className={`py-1.5 rounded-lg border transition-all ${
+                  step === i + 1 
+                    ? 'border-cyan-500 text-cyan-400 bg-cyan-950/40' 
+                    : i + 1 < step 
+                    ? 'border-emerald-500/40 text-emerald-400 bg-emerald-950/20' 
+                    : 'border-zinc-800 text-zinc-500 hover:text-zinc-300'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Wizard Form Panels */}
+        <div className="bg-[#12141C] border border-zinc-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
+          {/* STEP 1: LANE & ROUTE ARCHITECTURE */}
+          {step === 1 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                  <MapPin className="text-cyan-400" /> Lane Origin & Destination Routing
+                </h2>
+                <p className="text-sm text-zinc-400 mt-1">
+                  Specify origin, destination, equipment profile, and loaded hub miles.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-mono font-bold text-zinc-400 uppercase">Origin (Shipper Dock)</label>
+                  <input 
+                    type="text"
+                    value={origin}
+                    onChange={e => setOrigin(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white font-mono text-sm focus:border-cyan-400 outline-none min-h-[44px]" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-mono font-bold text-zinc-400 uppercase">Destination (Receiver Dock)</label>
+                  <input 
+                    type="text"
+                    value={destination}
+                    onChange={e => setDestination(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white font-mono text-sm focus:border-cyan-400 outline-none min-h-[44px]" 
+                  />
                 </div>
               </div>
 
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <span className="text-xs font-mono text-amber-400 uppercase tracking-wider block mb-1">{item.id}</span>
-                  <h4 className="text-xl font-bold text-white mb-2 leading-tight">{item.title}</h4>
-                  <p className="text-base text-zinc-200 leading-relaxed mb-4">{item.subtitle}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-mono font-bold text-zinc-400 uppercase">Equipment Profile</label>
+                  <select 
+                    value={equipmentType}
+                    onChange={e => setEquipmentType(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white font-mono text-sm focus:border-cyan-400 outline-none min-h-[44px]"
+                  >
+                    <option>53ft Dry Van</option>
+                    <option>53ft Multi-Temp Reefer</option>
+                    <option>48ft Heavy Flatbed</option>
+                    <option>48ft Step Deck / Lowboy</option>
+                    <option>Hotshot 40ft Gooseneck</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-mono font-bold text-zinc-400 uppercase">Loaded Hub Miles</label>
+                  <input 
+                    type="number"
+                    value={miles}
+                    onChange={e => setMiles(Number(e.target.value))}
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white font-mono text-sm focus:border-cyan-400 outline-none min-h-[44px]" 
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
-                  <div className="space-y-2 mb-6">
-                    {item.features.map((feat, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs text-zinc-300 font-mono">
-                        <Check className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                        <span>{feat}</span>
-                      </div>
-                    ))}
+          {/* STEP 2: CARGO & ACCESSORIAL PROFILING */}
+          {step === 2 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                  <Layers className="text-cyan-400" /> Cargo Specifications & Accessorials
+                </h2>
+                <p className="text-sm text-zinc-400 mt-1">
+                  Tag required endorsements, weight ratings, and accessorial fees.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-mono font-bold text-zinc-400 uppercase">Cargo Description</label>
+                  <input 
+                    type="text"
+                    value={cargoType}
+                    onChange={e => setCargoType(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white font-mono text-sm focus:border-cyan-400 outline-none min-h-[44px]" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-mono font-bold text-zinc-400 uppercase">Gross Weight (LBS)</label>
+                  <input 
+                    type="number"
+                    value={weight}
+                    onChange={e => setWeight(Number(e.target.value))}
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white font-mono text-sm focus:border-cyan-400 outline-none min-h-[44px]" 
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 font-mono text-xs">
+                {[
+                  { label: "Liftgate Required", state: hasLiftgate, toggle: () => setHasLiftgate(!hasLiftgate) },
+                  { label: "8ft Tarp Required", state: hasTarp, toggle: () => setHasTarp(!hasTarp) },
+                  { label: "Hazmat Class 9", state: isHazmat, toggle: () => setIsHazmat(!isHazmat) },
+                  { label: "Temp Controlled (34°F)", state: tempRequired, toggle: () => setTempRequired(!tempRequired) }
+                ].map(acc => (
+                  <button
+                    key={acc.label}
+                    onClick={acc.toggle}
+                    className={`p-3 rounded-xl border text-left flex flex-col justify-between transition-all min-h-[70px] ${
+                      acc.state 
+                        ? 'border-cyan-500 bg-cyan-950/40 text-cyan-300' 
+                        : 'border-zinc-800 bg-zinc-900/60 text-zinc-400'
+                    }`}
+                  >
+                    <span>{acc.label}</span>
+                    <span className="font-bold text-[11px] mt-1">{acc.state ? '✓ ACTIVE' : '+ ADD'}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3: RATE SPREAD & MARGIN SIMULATOR */}
+          {step === 3 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                  <DollarSign className="text-emerald-400" /> Live Margin & Rate Spread Engine
+                </h2>
+                <p className="text-sm text-zinc-400 mt-1">
+                  Adjust target shipper invoice and carrier buy rate to maximize brokerage margin.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-3 bg-zinc-900/80 p-5 rounded-xl border border-zinc-800">
+                  <label className="text-xs font-mono font-bold text-zinc-400 uppercase">Shipper Invoice Rate ($)</label>
+                  <input 
+                    type="number" 
+                    step="50"
+                    value={shipperRate} 
+                    onChange={e => setShipperRate(Number(e.target.value))}
+                    className="w-full bg-black border border-zinc-700 rounded-lg p-3 text-2xl font-black text-emerald-400 font-mono" 
+                  />
+                  <div className="flex justify-between text-xs font-mono text-zinc-400">
+                    <span>Shipper RPM:</span>
+                    <span className="text-white font-bold">${rpmShipper} / mile</span>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-zinc-800/80 flex items-center justify-between">
-                  <span className="text-sm font-bold text-amber-400 font-mono">{item.rate}</span>
-                  <a
-                    href="#dispatch"
-                    onClick={() => setSelectedItem(item.id)}
-                    className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-amber-500 hover:text-zinc-950 text-zinc-200 text-xs font-semibold transition"
-                  >
-                    Reserve Unit
-                  </a>
+                <div className="space-y-3 bg-zinc-900/80 p-5 rounded-xl border border-zinc-800">
+                  <label className="text-xs font-mono font-bold text-zinc-400 uppercase">Carrier Target Pay ($)</label>
+                  <input 
+                    type="number" 
+                    step="50"
+                    value={carrierPay} 
+                    onChange={e => setCarrierPay(Number(e.target.value))}
+                    className="w-full bg-black border border-zinc-700 rounded-lg p-3 text-2xl font-black text-amber-400 font-mono" 
+                  />
+                  <div className="flex justify-between text-xs font-mono text-zinc-400">
+                    <span>Carrier RPM:</span>
+                    <span className="text-white font-bold">${rpmCarrier} / mile</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Spread Telemetry Box */}
+              <div className="bg-gradient-to-r from-emerald-950/40 via-cyan-950/40 to-blue-950/40 border border-emerald-500/40 p-6 rounded-xl flex flex-wrap items-center justify-between gap-4 font-mono">
+                <div>
+                  <div className="text-xs text-zinc-400 uppercase tracking-wider">Gross Brokerage Spread</div>
+                  <div className="text-3xl font-black text-emerald-400 mt-1">${grossMargin.toLocaleString()} USD</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs text-zinc-400 uppercase tracking-wider">Margin Percentage</div>
+                  <div className="text-3xl font-black text-cyan-400 mt-1">{marginPercent}%</div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
+          )}
 
-      {/* Booking / Dispatch Intake */}
-      <section id="dispatch" className="py-20 px-6 bg-zinc-950 border-t border-zinc-800">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="text-xs font-mono text-amber-500 uppercase tracking-widest block mb-2">INSTANT BOOKING DISPATCH</span>
-            <h3 className="text-3xl font-extrabold text-white">Reserve Machinery or File Dispatch Mandate</h3>
-            <p className="text-zinc-400 text-sm mt-3">Direct integration into PostgreSQL delivery dispatches with zero friction.</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="p-8 rounded-2xl bg-[#121214] border border-amber-500/20 shadow-2xl space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* STEP 4: CARRIER COMPLIANCE & RATE CONFIRMATION */}
+          {step === 4 && (
+            <div className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold font-mono uppercase text-zinc-400 mb-2">Company / Mandate Entity</label>
-                <input
-                  type="text"
-                  required
-                  value={inquiryName}
-                  onChange={(e) => setInquiryName(e.target.value)}
-                  placeholder="e.g. Apex Infrastructure Partners LLC"
-                  className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 rounded-xl text-zinc-100 focus:outline-none focus:border-amber-500 text-sm font-sans"
-                />
+                <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                  <CheckCircle2 className="text-emerald-400" /> Carrier Compliance Checklist & Dispatch Confirmation
+                </h2>
+                <p className="text-sm text-zinc-400 mt-1">
+                  Verify FMCSA compliance prerequisites before publishing the binding rate confirmation.
+                </p>
               </div>
-              <div>
-                <label className="block text-sm font-semibold font-mono uppercase text-zinc-400 mb-2">Dispatch Contact Direct Line</label>
-                <input
-                  type="tel"
-                  required
-                  value={inquiryPhone}
-                  onChange={(e) => setInquiryPhone(e.target.value)}
-                  placeholder="+1 (555) 019-2834"
-                  className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 rounded-xl text-zinc-100 focus:outline-none focus:border-amber-500 text-sm font-sans"
-                />
-              </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-semibold font-mono uppercase text-zinc-400 mb-2">Selected Priority Asset</label>
-              <select
-                value={selectedItem}
-                onChange={(e) => setSelectedItem(e.target.value)}
-                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 rounded-xl text-zinc-100 focus:outline-none focus:border-amber-500 text-sm font-sans"
-              >
-                {ITEMS.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.id} - {item.title} ({item.rate})
-                  </option>
+              <div className="space-y-2.5 font-mono text-sm">
+                {[
+                  { key: 'activeInsurance', label: 'FMCSA $1,000,000 Auto Liability & $100k Cargo Insurance Active' },
+                  { key: 'safetyRatingSatisfactory', label: 'DOT Safety Rating: Satisfactory / Zero Out-of-Service Order' },
+                  { key: 'eldTrackingEnabled', label: 'MacroPoint / Project44 ELD Continuous Real-Time Tracking Link' },
+                  { key: 'w9OnDeck', label: 'W-9 & Direct Deposit Wire Remittance Verified' }
+                ].map(item => (
+                  <div 
+                    key={item.key}
+                    onClick={() => setCompliance(prev => ({ ...prev, [item.key]: !prev[item.key as keyof typeof compliance] }))}
+                    className="flex items-center gap-3 p-3.5 bg-zinc-900 border border-zinc-800 rounded-xl cursor-pointer hover:border-cyan-500/40 transition-all"
+                  >
+                    <div className={`w-5 h-5 rounded flex items-center justify-center border ${
+                      compliance[item.key as keyof typeof compliance] 
+                        ? 'bg-emerald-500 border-emerald-400 text-black' 
+                        : 'border-zinc-700 bg-black'
+                    }`}>
+                      {compliance[item.key as keyof typeof compliance] && <Check size={14} className="stroke-[3]" />}
+                    </div>
+                    <span className="text-zinc-200 text-xs sm:text-sm">{item.label}</span>
+                  </div>
                 ))}
-              </select>
+              </div>
+
+              {/* Dynamic Rate Confirmation Sheet Preview */}
+              <div className="bg-black/80 border border-zinc-700 p-5 rounded-xl font-mono text-xs space-y-2 text-zinc-300">
+                <div className="text-cyan-400 font-bold uppercase tracking-wider pb-2 border-b border-zinc-800 flex justify-between">
+                  <span>DISPATCH RATE CONFIRMATION // LANE-{Math.floor(Math.random()*8999)+1000}</span>
+                  <span className="text-emerald-400">STATUS: READY TO ISSUE</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 pt-2">
+                  <div>Origin: <strong className="text-white">{origin}</strong></div>
+                  <div>Destination: <strong className="text-white">{destination}</strong></div>
+                  <div>Equipment: <strong className="text-white">{equipmentType}</strong></div>
+                  <div>Cargo: <strong className="text-white">{cargoType} ({weight.toLocaleString()} lbs)</strong></div>
+                  <div>Carrier Remittance: <strong className="text-emerald-400">${carrierPay.toLocaleString()} Flat Rate</strong></div>
+                  <div>Distance: <strong className="text-white">{miles} Loaded Miles</strong></div>
+                </div>
+              </div>
             </div>
+          )}
 
-            <button
-              type="submit"
-              className="w-full py-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-extrabold text-sm uppercase tracking-wider transition shadow-lg shadow-amber-500/20"
-            >
-              {submitted ? '✓ MANDATE REGISTERED & TRANSMITTED' : 'SUBMIT DISPATCH RESERVATION REQUEST'}
-            </button>
-          </form>
-        </div>
-      </section>
+          {/* Stepper Navigation Buttons */}
+          <div className="flex justify-between items-center pt-6 border-t border-zinc-800 font-mono">
+            {step > 1 ? (
+              <button
+                onClick={() => setStep(step - 1)}
+                className="px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold rounded-xl flex items-center gap-2 text-sm transition-all min-h-[44px]"
+              >
+                <ArrowLeft size={16} /> Back
+              </button>
+            ) : <div />}
 
-      {/* Footer */}
-      <footer className="py-12 px-6 border-t border-zinc-800 bg-[#0A0A0B] text-zinc-300 text-xs font-mono">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <span className="text-zinc-300 font-bold">FREIGHT BROKER DISPATCH OS</span> • Commercial Operating System v1.0.0
+            {step < 4 ? (
+              <button
+                onClick={() => setStep(step + 1)}
+                className="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black font-black rounded-xl flex items-center gap-2 text-sm transition-all shadow-lg shadow-cyan-500/20 min-h-[44px]"
+              >
+                Continue to Stage {step + 1} <ArrowRight size={16} />
+              </button>
+            ) : (
+              <button
+                onClick={() => alert(`✓ Rate Confirmation issued for ${origin} → ${destination} at $${carrierPay}! Broker Margin: $${grossMargin} (${marginPercent}%)`)}
+                className="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl flex items-center gap-2 text-sm transition-all shadow-lg shadow-emerald-500/30 min-h-[44px]"
+              >
+                <CheckCircle2 size={18} /> ISSUE BINDING RATE CONFIRMATION
+              </button>
+            )}
           </div>
-          <div className="flex items-center gap-6">
-            <span>Ghost Factory™ Protocol</span>
-            <span>Supabase RLS Enforced</span>
-            <button
-              onClick={() => setIsAdminOpen(true)}
-              className="text-amber-400 hover:underline"
-            >
-              Admin Portal (freight2026)
-            </button>
-          </div>
         </div>
-      </footer>
+      </main>
 
-      {/* Admin Modal */}
       <AdminPortalModal isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
     </div>
   );
