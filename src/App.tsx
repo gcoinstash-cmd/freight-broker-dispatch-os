@@ -158,22 +158,22 @@ export default function App() {
             
               <div key="ACTIVE FREIGHT LANES" className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-sm">
                 <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider block">ACTIVE FREIGHT LANES</span>
-                <p className="text-lg sm:text-xl font-bold font-mono text-amber-400 mt-1">864 LANES</p>
+                <p className="text-lg sm:text-xl font-bold font-mono text-amber-400 mt-1">{"864 LANES"}</p>
               </div>
             
               <div key="AVERAGE RATE / MILE" className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-sm">
                 <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider block">AVERAGE RATE / MILE</span>
-                <p className="text-lg sm:text-xl font-bold font-mono text-amber-400 mt-1">$3.42 / MI</p>
+                <p className="text-lg sm:text-xl font-bold font-mono text-amber-400 mt-1">{"$3.42 / MI"}</p>
               </div>
             
               <div key="ON-TIME DISPATCH RATE" className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-sm">
                 <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider block">ON-TIME DISPATCH RATE</span>
-                <p className="text-lg sm:text-xl font-bold font-mono text-amber-400 mt-1">99.1%</p>
+                <p className="text-lg sm:text-xl font-bold font-mono text-amber-400 mt-1">{"99.1%"}</p>
               </div>
             
               <div key="DIGITAL BOL ARCHIVES" className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-sm">
                 <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider block">DIGITAL BOL ARCHIVES</span>
-                <p className="text-lg sm:text-xl font-bold font-mono text-amber-400 mt-1">14,290 DOCS</p>
+                <p className="text-lg sm:text-xl font-bold font-mono text-amber-400 mt-1">{"14,290 DOCS"}</p>
               </div>
             
           </div>

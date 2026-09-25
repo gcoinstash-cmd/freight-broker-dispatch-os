@@ -177,22 +177,22 @@ export const AdminPortalModal: React.FC<AdminPortalModalProps> = ({ isOpen, onCl
                   
                     <div key="ACTIVE FREIGHT LANES" className="p-3 rounded-lg bg-zinc-950 border border-zinc-800">
                       <span className="text-xs text-zinc-500 font-mono">ACTIVE FREIGHT LANES</span>
-                      <p className="text-lg font-bold text-amber-400 font-mono mt-0.5">864 LANES</p>
+                      <p className="text-lg font-bold text-amber-400 font-mono mt-0.5">{"864 LANES"}</p>
                     </div>
                   
                     <div key="AVERAGE RATE / MILE" className="p-3 rounded-lg bg-zinc-950 border border-zinc-800">
                       <span className="text-xs text-zinc-500 font-mono">AVERAGE RATE / MILE</span>
-                      <p className="text-lg font-bold text-amber-400 font-mono mt-0.5">$3.42 / MI</p>
+                      <p className="text-lg font-bold text-amber-400 font-mono mt-0.5">{"$3.42 / MI"}</p>
                     </div>
                   
                     <div key="ON-TIME DISPATCH RATE" className="p-3 rounded-lg bg-zinc-950 border border-zinc-800">
                       <span className="text-xs text-zinc-500 font-mono">ON-TIME DISPATCH RATE</span>
-                      <p className="text-lg font-bold text-amber-400 font-mono mt-0.5">99.1%</p>
+                      <p className="text-lg font-bold text-amber-400 font-mono mt-0.5">{"99.1%"}</p>
                     </div>
                   
                     <div key="DIGITAL BOL ARCHIVES" className="p-3 rounded-lg bg-zinc-950 border border-zinc-800">
                       <span className="text-xs text-zinc-500 font-mono">DIGITAL BOL ARCHIVES</span>
-                      <p className="text-lg font-bold text-amber-400 font-mono mt-0.5">14,290 DOCS</p>
+                      <p className="text-lg font-bold text-amber-400 font-mono mt-0.5">{"14,290 DOCS"}</p>
                     </div>
                   
                 </div>
